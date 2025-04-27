@@ -38,7 +38,7 @@ export class AdminComponent {
       title: ['', Validators.required],
       date: ['', [Validators.required, this.futureDateValidator]],
       time: ['', Validators.required],
-      timezone: ['America/New_York', Validators.required],
+      timezone: ['', Validators.required],
       image: [null, Validators.required],
     });
   }
@@ -79,8 +79,18 @@ export class AdminComponent {
       this.submitting = true;
       const { title, date, time, timezone, image } = this.eventForm.value;
 
-      // With HTML5 date input, date is already in YYYY-MM-DD format
-      const dateStr = date;
+      // Safely extract YYYY-MM-DD from the DatePicker's Date object
+      let dateStr: string;
+      if (date instanceof Date) {
+        dateStr =
+          date.getFullYear() +
+          '-' +
+          String(date.getMonth() + 1).padStart(2, '0') +
+          '-' +
+          String(date.getDate()).padStart(2, '0');
+      } else {
+        dateStr = date;
+      }
 
       // Combine date and time as a string in the selected timezone
       const dateTimeStr = `${dateStr}T${time}:00`;

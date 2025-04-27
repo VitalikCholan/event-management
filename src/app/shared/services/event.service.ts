@@ -7,7 +7,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class EventService {
-  private storageKey = 'events';
+  private readonly STORAGE_KEY = 'events';
   private eventsSubject: BehaviorSubject<Event[]>;
 
   constructor(private storageService: StorageService) {
@@ -17,7 +17,7 @@ export class EventService {
   }
 
   private getEventsFromStorage(): Event[] {
-    return this.storageService.get<Event[]>(this.storageKey) || [];
+    return this.storageService.get<Event[]>(this.STORAGE_KEY) || [];
   }
 
   getEvents$() {
@@ -27,7 +27,7 @@ export class EventService {
   addEvent(event: Event): void {
     const events = this.getEventsFromStorage();
     events.push(event);
-    this.storageService.set(this.storageKey, events);
+    this.storageService.set(this.STORAGE_KEY, events);
     this.eventsSubject.next(events);
   }
 
