@@ -57,54 +57,6 @@
   width: 100%;
 }
 
-/* Material datepicker customization */
-::ng-deep .mat-mdc-form-field {
-  width: 100%;
-  font-size: 14px;
-}
-
-::ng-deep .mat-mdc-text-field-wrapper {
-  height: 40px;
-  padding: 0 !important;
-  background-color: transparent !important;
-}
-
-::ng-deep .mat-mdc-form-field-flex {
-  height: 40px;
-}
-
-::ng-deep .mdc-text-field--outlined .mdc-notched-outline {
-  border-color: #ddd !important;
-  border-radius: 4px;
-}
-
-::ng-deep
-  .mdc-text-field--outlined:not(
-    .mdc-text-field--disabled
-  ).mdc-text-field--focused
-  .mdc-notched-outline__leading,
-::ng-deep
-  .mdc-text-field--outlined:not(
-    .mdc-text-field--disabled
-  ).mdc-text-field--focused
-  .mdc-notched-outline__notch,
-::ng-deep
-  .mdc-text-field--outlined:not(
-    .mdc-text-field--disabled
-  ).mdc-text-field--focused
-  .mdc-notched-outline__trailing {
-  border-color: #1976d2 !important;
-}
-
-::ng-deep .mat-mdc-form-field-infix {
-  padding: 8px 0 !important;
-  min-height: unset !important;
-}
-
-::ng-deep .mat-mdc-form-field-subscript-wrapper {
-  display: none;
-}
-
 /* File upload styling */
 .file-upload-container {
   display: flex;
