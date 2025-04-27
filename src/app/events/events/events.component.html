@@ -1,58 +1,33 @@
-@if (formattedEvents.length === 0) {
-<p>Подій не знайдено.</p>
-} @for (item of formattedEvents; track item.event.id) {
-<div
-  style="
-    border: 1px solid #d08f8f;
-    margin-bottom: 16px;
-    padding: 16px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    display: flex;
-  "
->
-  <div
-    style="
-      margin-right: 16px;
-      width: 80px;
-      height: 80px;
-      overflow: hidden;
-      border-radius: 4px;
-    "
-  >
-    @if (item.event.image) {
-    <img
-      [src]="item.event.image"
-      alt="Event image"
-      style="width: 100%; height: 100%; object-fit: cover"
-    />
-    } @else {
-    <div
-      style="
-        width: 100%;
-        height: 100%;
-        background-color: #f0f0f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      "
-    >
-      <span style="color: #999">No image</span>
-    </div>
-    }
-  </div>
+<h2 class="section-title">Список подій</h2>
 
-  <div>
-    <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 18px">
-      {{ item.event.title }}
-    </h3>
-    <p style="margin: 0 0 4px 0; font-size: 14px">
-      <strong>Оригінальний час:</strong> {{ item.originalTime }}
-    </p>
-    <p style="margin: 0; font-size: 14px">
-      <strong>Локальний час:</strong> {{ item.localTime }}
-    </p>
-  </div>
-</div>
+@if (formattedEvents.length === 0) {
+<p class="no-events">Подій не знайдено.</p>
 }
+
+<div class="events-list">
+  @for (item of formattedEvents; track item.event.id) {
+  <div class="event-card">
+    <div class="event-image-container">
+      @if (item.event.image) {
+      <img [src]="item.event.image" alt="Event image" class="event-image" />
+      } @else {
+      <div class="event-image-placeholder">
+        <span>No image</span>
+      </div>
+      }
+    </div>
+
+    <div class="event-details">
+      <h3 class="event-title">{{ item.event.title }}</h3>
+      <p class="event-time">
+        <span class="time-label">Оригінальний час:</span>
+        <span class="time-value">{{ item.originalTime }}</span>
+      </p>
+      <p class="event-time">
+        <span class="time-label">Локальний час:</span>
+        <span class="time-value">{{ item.localTime }}</span>
+      </p>
+    </div>
+  </div>
+  }
+</div>

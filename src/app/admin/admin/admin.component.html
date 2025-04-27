@@ -1,85 +1,107 @@
+<h2 class="section-title">Створення події</h2>
+
 @if (successMessage) {
-<div style="color: green; margin-bottom: 10px">{{ successMessage }}</div>
+<div class="success-message">{{ successMessage }}</div>
 }
 
 <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
-  <div>
-    <label for="title">Назва події</label>
-    <input id="title" type="text" formControlName="title" required />
+  <div class="form-group">
+    <label for="title">Назва події:</label>
+    <input
+      id="title"
+      type="text"
+      formControlName="title"
+      class="form-control"
+      required
+    />
     @if (eventForm.get('title')?.invalid && eventForm.get('title')?.touched) {
-    <div style="color: red">Назва події обов'язкова</div>
+    <div class="error-message">Назва події обов'язкова</div>
     }
   </div>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Дата події</mat-label>
-    <input matInput [matDatepicker]="picker" formControlName="date" required />
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
-  </mat-form-field>
+  <div class="form-group">
+    <label for="date">Дата події:</label>
+    <div class="date-picker-container">
+      <mat-form-field appearance="outline" class="full-width">
+        <input
+          matInput
+          [matDatepicker]="picker"
+          formControlName="date"
+          required
+        />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+    @if (eventForm.get('date')?.errors?.['required'] &&
+    eventForm.get('date')?.touched) {
+    <div class="error-message">Дата події обов'язкова</div>
+    } @if (eventForm.get('date')?.errors?.['notFuture'] &&
+    eventForm.get('date')?.touched) {
+    <div class="error-message">Дата події має бути у майбутньому</div>
+    }
+  </div>
 
-  @if (eventForm.get('date')?.errors?.['required'] &&
-  eventForm.get('date')?.touched) {
-  <div style="color: red">Дата події обов'язкова</div>
-  } @if (eventForm.get('date')?.errors?.['notFuture'] &&
-  eventForm.get('date')?.touched) {
-  <div style="color: red">Дата події має бути у майбутньому</div>
-  }
-
-  <div>
-    <label for="time">Час події</label>
-    <input id="time" type="time" formControlName="time" required />
+  <div class="form-group">
+    <label for="time">Час події:</label>
+    <input
+      id="time"
+      type="time"
+      formControlName="time"
+      class="form-control"
+      required
+    />
     @if (eventForm.get('time')?.invalid && eventForm.get('time')?.touched) {
-    <div style="color: red">Час події обов'язковий</div>
+    <div class="error-message">Час події обов'язковий</div>
     }
   </div>
 
-  <div>
-    <label for="timezone">Тайм-зона</label>
-    <select id="timezone" formControlName="timezone" required>
+  <div class="form-group">
+    <label for="timezone">Тайм-зона:</label>
+    <select
+      id="timezone"
+      formControlName="timezone"
+      class="form-control"
+      required
+    >
       @for (tz of ['Europe/Kyiv', 'America/New_York', 'Asia/Tokyo']; track tz) {
       <option [value]="tz">{{ tz }}</option>
       }
     </select>
     @if (eventForm.get('timezone')?.invalid &&
     eventForm.get('timezone')?.touched) {
-    <div style="color: red">Тайм-зона обов'язкова</div>
+    <div class="error-message">Тайм-зона обов'язкова</div>
     }
   </div>
 
-  <div>
+  <div class="form-group">
     <label>Завантажити зображення:</label>
-    <input
-      type="file"
-      (change)="onImageSelected($event)"
-      accept="image/*"
-      required
-    />
+    <div class="file-upload-container">
+      <input
+        type="file"
+        class="file-input"
+        (change)="onImageSelected($event)"
+        accept="image/*"
+        required
+        id="fileUpload"
+      />
+      <label for="fileUpload" class="file-upload-btn">Вибрати файл</label>
+    </div>
     @if (eventForm.get('image')?.invalid && eventForm.get('image')?.touched) {
-    <div style="color: red">Зображення обов'язкове</div>
+    <div class="error-message">Зображення обов'язкове</div>
     }
   </div>
 
   @if (imagePreview) {
-  <div>
-    <img
-      [src]="imagePreview"
-      alt="Preview"
-      style="max-width: 200px; margin-top: 10px"
-    />
+  <div class="image-preview-container">
+    <img [src]="imagePreview" alt="Preview" class="image-preview" />
   </div>
   }
 
   <button
     type="submit"
     [disabled]="eventForm.invalid || submitting"
-    style="
-      background-color: #3f51b5;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      cursor: pointer;
-    "
+    class="submit-button"
   >
     Створити подію
   </button>
