@@ -1,7 +1,14 @@
+@if (successMessage) {
+<div style="color: green; margin-bottom: 10px">{{ successMessage }}</div>
+}
+
 <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
   <div>
     <label for="title">Назва події</label>
     <input id="title" type="text" formControlName="title" required />
+    @if (eventForm.get('title')?.invalid && eventForm.get('title')?.touched) {
+    <div style="color: red">Назва події обов'язкова</div>
+    }
   </div>
 
   <mat-form-field appearance="fill">
@@ -11,7 +18,10 @@
     <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>
 
-  @if (eventForm.get('date')?.errors?.['notFuture'] &&
+  @if (eventForm.get('date')?.errors?.['required'] &&
+  eventForm.get('date')?.touched) {
+  <div style="color: red">Дата події обов'язкова</div>
+  } @if (eventForm.get('date')?.errors?.['notFuture'] &&
   eventForm.get('date')?.touched) {
   <div style="color: red">Дата події має бути у майбутньому</div>
   }
@@ -19,6 +29,9 @@
   <div>
     <label for="time">Час події</label>
     <input id="time" type="time" formControlName="time" required />
+    @if (eventForm.get('time')?.invalid && eventForm.get('time')?.touched) {
+    <div style="color: red">Час події обов'язковий</div>
+    }
   </div>
 
   <div>
@@ -28,6 +41,10 @@
       <option [value]="tz">{{ tz }}</option>
       }
     </select>
+    @if (eventForm.get('timezone')?.invalid &&
+    eventForm.get('timezone')?.touched) {
+    <div style="color: red">Тайм-зона обов'язкова</div>
+    }
   </div>
 
   <div>
@@ -38,6 +55,9 @@
       accept="image/*"
       required
     />
+    @if (eventForm.get('image')?.invalid && eventForm.get('image')?.touched) {
+    <div style="color: red">Зображення обов'язкове</div>
+    }
   </div>
 
   @if (imagePreview) {
@@ -52,7 +72,7 @@
 
   <button
     type="submit"
-    [disabled]="eventForm.invalid"
+    [disabled]="eventForm.invalid || submitting"
     style="
       background-color: #3f51b5;
       color: white;

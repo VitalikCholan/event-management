@@ -26,6 +26,8 @@ import { EventService } from '../../shared/services/event.service';
 export class AdminComponent {
   eventForm: FormGroup;
   imagePreview: string | ArrayBuffer | null = null;
+  successMessage: string | null = null;
+  submitting = false;
 
   constructor(private fb: FormBuilder) {
     this.eventForm = this.fb.group({
@@ -52,26 +54,42 @@ export class AdminComponent {
 
   onImageSelected(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
+    const imageControl = this.eventForm.get('image');
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreview = reader.result;
-        this.eventForm.patchValue({ image: reader.result });
+        imageControl?.setValue(reader.result);
+        imageControl?.markAsTouched();
+        imageControl?.updateValueAndValidity();
       };
       reader.readAsDataURL(file);
+    } else {
+      // If no file is selected, clear the value and mark as touched
+      imageControl?.setValue(null);
+      imageControl?.markAsTouched();
+      imageControl?.updateValueAndValidity();
     }
   }
 
   onSubmit(): void {
     if (this.eventForm.valid) {
+      this.submitting = true;
       const event = {
         ...this.eventForm.value,
-        id: Date.now().toString(), // Generate a simple unique ID
+        id: Date.now().toString(),
       };
       this.eventService.addEvent(event);
-      alert('Event created!');
+      this.successMessage = 'Подію успішно створено!'; // "Event created successfully!"
       this.eventForm.reset();
       this.imagePreview = null;
+      setTimeout(() => {
+        this.successMessage = null;
+        this.submitting = false;
+      }, 3000);
+    } else {
+      // Mark all controls as touched to show errors on first submit
+      this.eventForm.markAllAsTouched();
     }
   }
 }
