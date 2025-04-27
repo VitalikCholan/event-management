@@ -1,11 +1,16 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { EventService } from '../../shared/services/event.service';
-import { ReactiveFormsModule } from '@angular/forms';
-
 @Component({
   selector: 'app-admin',
   standalone: true,
@@ -35,7 +40,7 @@ export class AdminComponent {
   eventService = inject(EventService);
 
   // Custom validator for future date
-  futureDateValidator(control: any) {
+  futureDateValidator(control: AbstractControl): ValidationErrors | null {
     if (!control.value) return null;
     const selected = new Date(control.value);
     const today = new Date();
@@ -45,8 +50,8 @@ export class AdminComponent {
     return selected > today ? null : { notFuture: true };
   }
 
-  onImageSelected(event: any) {
-    const file = event.target.files[0];
+  onImageSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
@@ -57,7 +62,7 @@ export class AdminComponent {
     }
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.eventForm.valid) {
       const event = {
         ...this.eventForm.value,
