@@ -1,6 +1,6 @@
-@if (events.length === 0) {
+@if (formattedEvents.length === 0) {
 <p>Подій не знайдено.</p>
-} @for (event of events; track event.id) {
+} @for (item of formattedEvents; track item.event.id) {
 <div
   style="
     border: 1px solid #ccc;
@@ -10,9 +10,9 @@
     max-width: 400px;
   "
 >
-  @if (event.image) {
+  @if (item.event.image) {
   <img
-    [src]="event.image"
+    [src]="item.event.image"
     alt="Event image"
     style="
       max-width: 100%;
@@ -22,9 +22,8 @@
     "
   />
   }
-  <h3>{{ event.title }}</h3>
-  <p><strong>Дата:</strong> {{ event.date | date : "dd.MM.yyyy" }}</p>
-  <p><strong>Час:</strong> {{ event.time }}</p>
-  <p><strong>Тайм-зона:</strong> {{ event.timezone }}</p>
+  <h3>{{ item.event.title }}</h3>
+  <p><strong>Оригінальний час:</strong> {{ item.originalTime }}</p>
+  <p><strong>Локальний час:</strong> {{ item.localTime }}</p>
 </div>
 }

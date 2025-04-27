@@ -11,6 +11,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { EventService } from '../../shared/services/event.service';
+import { TimezoneService } from '../../shared/services/timezone.service';
 @Component({
   selector: 'app-admin',
   standalone: true,
@@ -40,6 +41,7 @@ export class AdminComponent {
   }
 
   eventService = inject(EventService);
+  timezoneService = inject(TimezoneService);
 
   // Custom validator for future date
   futureDateValidator(control: AbstractControl): ValidationErrors | null {
@@ -75,9 +77,21 @@ export class AdminComponent {
   onSubmit(): void {
     if (this.eventForm.valid) {
       this.submitting = true;
+      const { title, date, time, timezone, image } = this.eventForm.value;
+      // Ensure date is a Date object and extract YYYY-MM-DD
+      const dateObj: Date = date instanceof Date ? date : new Date(date);
+      const dateStr = dateObj.toISOString().slice(0, 10); // 'YYYY-MM-DD'
+      const dateTimeStr = `${dateStr}T${time}:00`;
+      const utcDate = this.timezoneService.zonedTimeToUtc(
+        dateTimeStr,
+        timezone
+      );
       const event = {
-        ...this.eventForm.value,
         id: Date.now().toString(),
+        title,
+        utcDateTime: utcDate.toISOString(),
+        timezone,
+        image,
       };
       this.eventService.addEvent(event);
       this.successMessage = 'Подію успішно створено!'; // "Event created successfully!"
