@@ -2,6 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { EventService } from '../../shared/services/event.service';
 import { Event } from '../../shared/models/event.model';
 import { TimezoneService } from '../../shared/services/timezone.service';
+import { uk } from 'date-fns/locale';
+import { setDefaultOptions } from 'date-fns';
 
 @Component({
   selector: 'app-events',
@@ -21,16 +23,30 @@ export class EventsComponent implements OnInit {
   private timezoneService = inject(TimezoneService);
 
   ngOnInit(): void {
+    // Set the default locale for date-fns
+    setDefaultOptions({ locale: uk });
+
     this.eventService.getEvents$().subscribe((events) => {
       this.events = events;
-      this.formattedEvents = events.map((event) => ({
-        event,
-        originalTime: this.timezoneService.formatOriginalUtc(
+
+      this.formattedEvents = events.map((event) => {
+        // Format original time (event's timezone)
+        const originalTime = this.timezoneService.formatOriginalUtc(
           event.utcDateTime,
           event.timezone
-        ),
-        localTime: this.timezoneService.formatLocalUtc(event.utcDateTime),
-      }));
+        );
+
+        // Format local time (user's timezone)
+        const localTime = this.timezoneService.formatLocalUtc(
+          event.utcDateTime
+        );
+
+        return {
+          event,
+          originalTime,
+          localTime,
+        };
+      });
     });
   }
 }

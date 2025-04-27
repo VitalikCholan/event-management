@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { format, parseISO } from 'date-fns';
 import { formatInTimeZone, toZonedTime } from 'date-fns-tz';
+import { uk } from 'date-fns/locale';
 
 @Injectable({
   providedIn: 'root',
@@ -40,8 +41,16 @@ export class TimezoneService {
       // Parse the UTC ISO string to a Date object
       const date = new Date(utcDateTime);
 
-      // Direct conversion from UTC to the target timezone without using toZonedTime
-      return formatInTimeZone(date, timezone, 'dd.MM.yyyy HH:mm (z)');
+      // Format date with the actual timezone name rather than GMT offset
+      const formattedDate = formatInTimeZone(
+        date,
+        timezone,
+        "dd MMM yyyy 'p.' HH:mm",
+        { locale: uk }
+      );
+
+      // Use the timezone identifier directly
+      return `${formattedDate} (${timezone})`;
     } catch (error) {
       return '';
     }
@@ -56,25 +65,18 @@ export class TimezoneService {
       // Parse the UTC ISO string to a Date object
       const date = new Date(utcDateTime);
 
-      // Direct conversion from UTC to the user's timezone
-      return formatInTimeZone(date, userTz, 'dd.MM.yyyy HH:mm (z)');
+      // Format date with the actual timezone name rather than GMT offset
+      const formattedDate = formatInTimeZone(
+        date,
+        userTz,
+        "dd MMM yyyy 'p.' HH:mm",
+        { locale: uk }
+      );
+
+      // Use the timezone identifier directly
+      return `${formattedDate} (${userTz})`;
     } catch (error) {
       return '';
-    }
-  }
-
-  // Debugging helper to visualize timezone conversions (simplified)
-  private debugTimezoneConversion(
-    utcDateTime: string,
-    targetTimezone: string
-  ): void {
-    // Debug function kept for future use but logging removed
-    const date = new Date(utcDateTime);
-    try {
-      const zonedDate = toZonedTime(date, targetTimezone);
-      format(zonedDate, 'yyyy-MM-dd HH:mm:ss');
-    } catch (e) {
-      // Error handling preserved but not logged
     }
   }
 
