@@ -1,0 +1,66 @@
+<form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="title">Назва події</label>
+    <input id="title" type="text" formControlName="title" required />
+  </div>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Дата події</mat-label>
+    <input matInput [matDatepicker]="picker" formControlName="date" required />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  @if (eventForm.get('date')?.errors?.['notFuture'] &&
+  eventForm.get('date')?.touched) {
+  <div style="color: red">Дата події має бути у майбутньому</div>
+  }
+
+  <div>
+    <label for="time">Час події</label>
+    <input id="time" type="time" formControlName="time" required />
+  </div>
+
+  <div>
+    <label for="timezone">Тайм-зона</label>
+    <select id="timezone" formControlName="timezone" required>
+      @for (tz of ['Europe/Kyiv', 'America/New_York', 'Asia/Tokyo']; track tz) {
+      <option [value]="tz">{{ tz }}</option>
+      }
+    </select>
+  </div>
+
+  <div>
+    <label>Завантажити зображення:</label>
+    <input
+      type="file"
+      (change)="onImageSelected($event)"
+      accept="image/*"
+      required
+    />
+  </div>
+
+  @if (imagePreview) {
+  <div>
+    <img
+      [src]="imagePreview"
+      alt="Preview"
+      style="max-width: 200px; margin-top: 10px"
+    />
+  </div>
+  }
+
+  <button
+    type="submit"
+    [disabled]="eventForm.invalid"
+    style="
+      background-color: #3f51b5;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+    "
+  >
+    Створити подію
+  </button>
+</form>
