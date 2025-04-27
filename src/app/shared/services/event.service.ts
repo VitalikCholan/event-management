@@ -1,25 +1,40 @@
 import { Injectable } from '@angular/core';
 import { StorageService } from './storage.service';
 import { Event } from '../models/event.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EventService {
   private storageKey = 'events';
+  private eventsSubject: BehaviorSubject<Event[]>;
 
-  constructor(private storageService: StorageService) {}
+  constructor(private storageService: StorageService) {
+    this.eventsSubject = new BehaviorSubject<Event[]>(
+      this.getEventsFromStorage()
+    );
+  }
+
+  private getEventsFromStorage(): Event[] {
+    return this.storageService.get<Event[]>(this.storageKey) || [];
+  }
+
+  getEvents$() {
+    return this.eventsSubject.asObservable();
+  }
 
   // CREATE
   addEvent(event: Event): void {
-    const events = this.getEvents();
+    const events = this.getEventsFromStorage();
     events.push(event);
     this.storageService.set(this.storageKey, events);
+    this.eventsSubject.next(events);
   }
 
   // READ
   getEvents(): Event[] {
-    return this.storageService.get(this.storageKey) || [];
+    return this.getEventsFromStorage();
   }
 
   getEventById(id: string): Event | undefined {
@@ -32,11 +47,13 @@ export class EventService {
       e.id === updated.id ? updated : e
     );
     this.storageService.set(this.storageKey, events);
+    this.eventsSubject.next(events);
   }
 
   // DELETE
   removeEvent(id: string): void {
     const events = this.getEvents().filter((e) => e.id !== id);
     this.storageService.set(this.storageKey, events);
+    this.eventsSubject.next(events);
   }
 }

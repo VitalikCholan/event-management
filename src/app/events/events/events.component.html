@@ -1,1 +1,30 @@
-<p>events works!</p>
+@if (events.length === 0) {
+<p>Подій не знайдено.</p>
+} @for (event of events; track event.id) {
+<div
+  style="
+    border: 1px solid #ccc;
+    margin-bottom: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    max-width: 400px;
+  "
+>
+  @if (event.image) {
+  <img
+    [src]="event.image"
+    alt="Event image"
+    style="
+      max-width: 100%;
+      max-height: 150px;
+      display: block;
+      margin-bottom: 8px;
+    "
+  />
+  }
+  <h3>{{ event.title }}</h3>
+  <p><strong>Дата:</strong> {{ event.date | date : "dd.MM.yyyy" }}</p>
+  <p><strong>Час:</strong> {{ event.time }}</p>
+  <p><strong>Тайм-зона:</strong> {{ event.timezone }}</p>
+</div>
+}
