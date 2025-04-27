@@ -29,10 +29,7 @@ export class EventsComponent implements OnInit {
           event.utcDateTime,
           event.timezone
         ),
-        localTime: this.timezoneService.formatLocalUtc(
-          event.utcDateTime,
-          event.timezone
-        ),
+        localTime: this.timezoneService.formatLocalUtc(event.utcDateTime),
       }));
     });
   }

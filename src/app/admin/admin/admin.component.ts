@@ -30,6 +30,9 @@ export class AdminComponent {
   successMessage: string | null = null;
   submitting = false;
 
+  eventService = inject(EventService);
+  timezoneService = inject(TimezoneService);
+
   constructor(private fb: FormBuilder) {
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
@@ -39,9 +42,6 @@ export class AdminComponent {
       image: [null, Validators.required],
     });
   }
-
-  eventService = inject(EventService);
-  timezoneService = inject(TimezoneService);
 
   // Custom validator for future date
   futureDateValidator(control: AbstractControl): ValidationErrors | null {
@@ -78,14 +78,29 @@ export class AdminComponent {
     if (this.eventForm.valid) {
       this.submitting = true;
       const { title, date, time, timezone, image } = this.eventForm.value;
-      // Ensure date is a Date object and extract YYYY-MM-DD
-      const dateObj: Date = date instanceof Date ? date : new Date(date);
-      const dateStr = dateObj.toISOString().slice(0, 10); // 'YYYY-MM-DD'
+
+      // Safely extract YYYY-MM-DD from the DatePicker's Date object
+      let dateStr: string;
+      if (date instanceof Date) {
+        dateStr =
+          date.getFullYear() +
+          '-' +
+          String(date.getMonth() + 1).padStart(2, '0') +
+          '-' +
+          String(date.getDate()).padStart(2, '0');
+      } else {
+        dateStr = date;
+      }
+
+      // Combine date and time as a string in the selected timezone
       const dateTimeStr = `${dateStr}T${time}:00`;
+
+      // Convert to UTC using your TimezoneService
       const utcDate = this.timezoneService.zonedTimeToUtc(
         dateTimeStr,
         timezone
       );
+
       const event = {
         id: Date.now().toString(),
         title,
@@ -93,8 +108,9 @@ export class AdminComponent {
         timezone,
         image,
       };
+
       this.eventService.addEvent(event);
-      this.successMessage = 'Подію успішно створено!'; // "Event created successfully!"
+      this.successMessage = 'Подію успішно створено!';
       this.eventForm.reset();
       this.imagePreview = null;
       setTimeout(() => {
@@ -102,7 +118,6 @@ export class AdminComponent {
         this.submitting = false;
       }, 3000);
     } else {
-      // Mark all controls as touched to show errors on first submit
       this.eventForm.markAllAsTouched();
     }
   }
